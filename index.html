@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Struk Belanja</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- CSS Styling -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-container input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #218838;
+        }
+
+        .receipts-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .receipt {
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border: 2px dashed #333;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .receipt-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .receipt-details {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .receipt-details p {
+            margin: 2px 0;
+        }
+
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .receipt-table th, .receipt-table td {
+            border-bottom: 1px solid #ddd;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .receipt-table th {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .receipt-summary {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .receipt-summary p {
+            margin: 2px 0;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .download-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .download-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .receipt {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Generator Struk Belanja Acak</h1>
+
+    <div class="form-container">
+        <input type="number" id="receiptCount" placeholder="Masukkan jumlah struk" min="1" />
+        <button id="generateBtn">Buat Struk</button>
+    </div>
+
+    <div class="receipts-container" id="receiptsContainer">
+        <!-- Struk akan ditampilkan di sini -->
+    </div>
+
+    <!-- Faker.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker/dist/faker.min.js"></script>
+    <!-- html2canvas Library -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <!-- JavaScript Logic -->
+    <script>
+        const faker = window.faker;
+
+        // Daftar produk dengan rentang harga
+        const products = [
+            { name: "Beras 5kg", priceRange: [70000, 80000] },
+            { name: "Minyak Goreng 2L", priceRange: [25000, 30000] },
+            { name: "Gula Pasir 1kg", priceRange: [12000, 15000] },
+            { name: "Telur Ayam 1kg", priceRange: [25000, 30000] },
+            { name: "Indomie Goreng", priceRange: [2000, 3000] },
+            { name: "Tepung Terigu 1kg", priceRange: [10000, 15000] },
+            { name: "Kopi Sachet", priceRange: [1000, 2000] },
+            { name: "Teh Botol Sosro", priceRange: [4000, 6000] },
+            { name: "Sabun Mandi 100gr", priceRange: [2500, 3500] },
+            { name: "Susu UHT 1L", priceRange: [12000, 18000] },
+            { name: "Pasta Gigi 150gr", priceRange: [15000, 20000] },
+            { name: "Rokok Marlboro", priceRange: [25000, 35000] },
+            { name: "Sampo Sachet", priceRange: [800, 1500] },
+            { name: "Kecap Manis 500ml", priceRange: [15000, 20000] },
+            { name: "Sarden Kaleng", priceRange: [12000, 18000] },
+            { name: "Mie Sedap", priceRange: [2000, 3000] },
+            { name: "Coca Cola 330ml", priceRange: [7000, 9000] },
+            { name: "Obat Flu", priceRange: [10000, 20000] },
+            { name: "Biskuit", priceRange: [5000, 10000] },
+            { name: "Permen", priceRange: [2000, 5000] }
+        ];
+
+        // Kata sifat dan benda untuk nama toko
+        const adjectives = ["Mega", "Sumber", "Bintang", "Berkah", "Dharma", "Taman", "Sejahtera", "Murah", "Bersama", "ASC", "Sultan", "Zamza", "Airdrop Sultan"];
+        const nouns = ["Mart", "Toserba", "Supermarket", "Belanja", "Food", "Sumber", "Toko", "Sayur", "Susu"];
+
+        // Fungsi untuk menghasilkan nama toko acak
+        function generateStoreName() {
+            const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+            const noun = nouns[Math.floor(Math.random() * nouns.length)];
+            return `${adj} ${noun}`;
+        }
+
+        // Fungsi untuk memilih harga acak berdasarkan rentang harga
+        function getRandomPrice(range) {
+            return Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
+        }
+
+        // Fungsi untuk membungkus teks agar tidak terlalu panjang
+        function wrapText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.slice(0, maxLength - 2) + '..';
+        }
+
+        // Fungsi untuk menghasilkan struk belanja
+        function generateReceipt() {
+            // Pilih toko acak
+            const storeName = generateStoreName();
+            const storeAddress = faker.address.streetAddress(true) + ", " + faker.address.city();
+            const storePhone = faker.phone.number("08##-####-####");
+
+            // Tanggal dan waktu pembelian
+            const now = new Date();
+            const dateTime = now.toISOString().slice(0, 19).replace('T', ' ');
+
+            // Jumlah item belanjaan
+            const itemCount = Math.floor(Math.random() * 11) + 5; // antara 5 hingga 15
+
+            // Pilih item secara acak
+            const purchasedItems = [];
+            for (let i = 0; i < itemCount; i++) {
+                const product = products[Math.floor(Math.random() * products.length)];
+                purchasedItems.push(product);
+            }
+
+            // Hitung jumlah setiap item yang dibeli
+            const cart = {};
+            purchasedItems.forEach(item => {
+                if (cart[item.name]) {
+                    cart[item.name].quantity += 1;
+                } else {
+                    cart[item.name] = {
+                        price: getRandomPrice(item.priceRange),
+                        quantity: 1
+                    };
+                }
+            });
+
+            // Hitung subtotal
+            let subtotal = 0;
+            for (const item in cart) {
+                subtotal += cart[item].price * cart[item].quantity;
+            }
+
+            // Terapkan diskon acak
+            const discounts = [0, 0.05, 0.1, 0.15];
+            const discount = discounts[Math.floor(Math.random() * discounts.length)];
+            const discountAmount = subtotal * discount;
+            const total = subtotal - discountAmount;
+
+            // Buat elemen struk
+            const receipt = document.createElement('div');
+            receipt.classList.add('receipt');
+
+            // Tombol Unduh
+            const downloadBtn = document.createElement('button');
+            downloadBtn.classList.add('download-button');
+            downloadBtn.innerText = 'Unduh';
+            downloadBtn.onclick = () => {
+                html2canvas(receipt).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `bb_ASC_${Date.now()}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            };
+            receipt.appendChild(downloadBtn);
+
+            // Header
+            const header = document.createElement('div');
+            header.classList.add('receipt-header');
+            const storeTitle = document.createElement('h2');
+            storeTitle.innerText = storeName;
+            header.appendChild(storeTitle);
+            receipt.appendChild(header);
+
+            // Detail Toko dan Pembelian
+            const details = document.createElement('div');
+            details.classList.add('receipt-details');
+            const addressP = document.createElement('p');
+            addressP.innerText = storeAddress;
+            const phoneP = document.createElement('p');
+            phoneP.innerText = `Telp: ${storePhone}`;
+            const dateP = document.createElement('p');
+            dateP.innerText = `Date/Time: ${dateTime}`;
+            details.appendChild(addressP);
+            details.appendChild(phoneP);
+            details.appendChild(dateP);
+            receipt.appendChild(details);
+
+            // Tabel Item
+            const table = document.createElement('table');
+            table.classList.add('receipt-table');
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const thItem = document.createElement('th');
+            thItem.innerText = 'Item';
+            const thQty = document.createElement('th');
+            thQty.innerText = 'Qty';
+            const thPrice = document.createElement('th');
+            thPrice.innerText = 'Price';
+            headerRow.appendChild(thItem);
+            headerRow.appendChild(thQty);
+            headerRow.appendChild(thPrice);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            for (const item in cart) {
+                const row = document.createElement('tr');
+                const tdName = document.createElement('td');
+                tdName.innerText = wrapText(item, 15);
+                const tdQty = document.createElement('td');
+                tdQty.innerText = cart[item].quantity;
+                const tdPrice = document.createElement('td');
+                tdPrice.innerText = `Rp${cart[item].price.toLocaleString('id-ID')}`;
+                row.appendChild(tdName);
+                row.appendChild(tdQty);
+                row.appendChild(tdPrice);
+                tbody.appendChild(row);
+            }
+            table.appendChild(tbody);
+            receipt.appendChild(table);
+
+            // Summary
+            const summary = document.createElement('div');
+            summary.classList.add('receipt-summary');
+            const subtotalP = document.createElement('p');
+            subtotalP.innerHTML = `<strong>Subtotal:</strong> Rp${subtotal.toLocaleString('id-ID')}`;
+            summary.appendChild(subtotalP);
+
+            if (discount > 0) {
+                const discountP = document.createElement('p');
+                discountP.innerHTML = `<strong>Diskon:</strong> <span style="color: red;">Rp${discountAmount.toLocaleString('id-ID')}</span>`;
+                summary.appendChild(discountP);
+            }
+
+            const totalP = document.createElement('p');
+            totalP.innerHTML = `<strong>Total:</strong> Rp${total.toLocaleString('id-ID')}`;
+            summary.appendChild(totalP);
+            receipt.appendChild(summary);
+
+            // Footer
+            const footer = document.createElement('div');
+            footer.classList.add('receipt-footer');
+            footer.innerHTML = `Channel: <a href="https://t.me/airdropasc" target="_blank">https://t.me/airdropasc</a>`;
+            receipt.appendChild(footer);
+
+            return receipt;
+        }
+
+        // Event Listener untuk tombol Generate
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            const count = parseInt(document.getElementById('receiptCount').value);
+            if (isNaN(count) || count < 1) {
+                alert("Tolong masukkan angka yang valid.");
+                return;
+            }
+
+            const container = document.getElementById('receiptsContainer');
+            container.innerHTML = ''; // Bersihkan struk sebelumnya
+
+            for (let i = 0; i < count; i++) {
+                const receipt = generateReceipt();
+                container.appendChild(receipt);
+            }
+        });
+    </script>
+</body>
+</html>
