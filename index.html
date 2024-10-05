@@ -267,15 +267,23 @@
             const downloadBtn = document.createElement('button');
             downloadBtn.classList.add('download-button');
             downloadBtn.innerText = 'Unduh';
-            downloadBtn.onclick = () => {
-                html2canvas(receipt).then(canvas => {
+            downloadBtn.onclick = async () => {
+                try {
+                    // Sembunyikan tombol "Unduh"
+                    downloadBtn.style.display = 'none';
+
+                    // Ambil gambar struk
+                    const canvas = await html2canvas(receipt);
                     const link = document.createElement('a');
                     link.download = `bb_ASC_${Date.now()}.png`;
                     link.href = canvas.toDataURL();
                     link.click();
-                }).catch(err => {
+                } catch (err) {
                     console.error("Gagal mengunduh struk:", err);
-                });
+                } finally {
+                    // Tampilkan kembali tombol "Unduh"
+                    downloadBtn.style.display = 'block';
+                }
             };
             receipt.appendChild(downloadBtn);
 
