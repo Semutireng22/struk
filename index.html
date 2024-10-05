@@ -65,6 +65,7 @@
             border: 2px dashed #333;
             border-radius: 8px;
             position: relative;
+            box-sizing: border-box;
         }
 
         .receipt-header {
@@ -117,6 +118,7 @@
             text-align: center;
             font-size: 12px;
             color: #555;
+            margin-top: 10px;
         }
 
         .download-button {
@@ -157,20 +159,10 @@
         <!-- Struk akan ditampilkan di sini -->
     </div>
 
-    <!-- Faker.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker@7.6.0/dist/faker.umd.min.js"></script>
     <!-- html2canvas Library -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <!-- JavaScript Logic -->
     <script>
-        // Pastikan Faker.js telah dimuat
-        if (typeof faker === 'undefined') {
-            alert("Faker.js tidak dimuat dengan benar.");
-        }
-
-        // Atur locale ke Indonesia
-        faker.locale = 'id';
-
         // Daftar produk dengan rentang harga
         const products = [
             { name: "Beras 5kg", priceRange: [70000, 80000] },
@@ -221,8 +213,8 @@
         function generateReceipt() {
             // Pilih toko acak
             const storeName = generateStoreName();
-            const storeAddress = faker.address.streetAddress() + ", " + faker.address.city();
-            const storePhone = faker.phone.number("08##-####-####");
+            const storeAddress = "Jl. Merdeka No. 10, Jakarta Pusat";
+            const storePhone = "0812-3456-7890";
 
             // Tanggal dan waktu pembelian
             const now = new Date();
@@ -361,10 +353,10 @@
             summary.appendChild(totalP);
             receipt.appendChild(summary);
 
-            // Footer
+            // Footer dengan pesan default
             const footer = document.createElement('div');
             footer.classList.add('receipt-footer');
-            footer.innerHTML = `Channel: <a href="https://t.me/airdropasc" target="_blank">https://t.me/airdropasc</a>`;
+            footer.innerHTML = `Jangan Lupa Gabung Di <a href="https://t.me/airdropasc" target="_blank">@airdropasc</a>`;
             receipt.appendChild(footer);
 
             return receipt;
