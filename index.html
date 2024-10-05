@@ -163,10 +163,13 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <!-- JavaScript Logic -->
     <script>
-        // Pastikan faker tersedia
+        // Pastikan Faker.js telah dimuat
         if (typeof faker === 'undefined') {
             alert("Faker.js tidak dimuat dengan benar.");
         }
+
+        // Atur locale ke Indonesia
+        faker.locale = 'id';
 
         // Daftar produk dengan rentang harga
         const products = [
