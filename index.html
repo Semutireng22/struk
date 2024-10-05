@@ -158,12 +158,15 @@
     </div>
 
     <!-- Faker.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker/dist/faker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker@7.6.0/dist/faker.umd.min.js"></script>
     <!-- html2canvas Library -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <!-- JavaScript Logic -->
     <script>
-        const faker = window.faker;
+        // Pastikan faker tersedia
+        if (typeof faker === 'undefined') {
+            alert("Faker.js tidak dimuat dengan benar.");
+        }
 
         // Daftar produk dengan rentang harga
         const products = [
@@ -215,12 +218,16 @@
         function generateReceipt() {
             // Pilih toko acak
             const storeName = generateStoreName();
-            const storeAddress = faker.address.streetAddress(true) + ", " + faker.address.city();
+            const storeAddress = faker.address.streetAddress() + ", " + faker.address.city();
             const storePhone = faker.phone.number("08##-####-####");
 
             // Tanggal dan waktu pembelian
             const now = new Date();
-            const dateTime = now.toISOString().slice(0, 19).replace('T', ' ');
+            const dateTime = now.toLocaleString('id-ID', { 
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hour12: false 
+            }).replace(',', '');
 
             // Jumlah item belanjaan
             const itemCount = Math.floor(Math.random() * 11) + 5; // antara 5 hingga 15
@@ -271,6 +278,8 @@
                     link.download = `bb_ASC_${Date.now()}.png`;
                     link.href = canvas.toDataURL();
                     link.click();
+                }).catch(err => {
+                    console.error("Gagal mengunduh struk:", err);
                 });
             };
             receipt.appendChild(downloadBtn);
@@ -360,7 +369,8 @@
 
         // Event Listener untuk tombol Generate
         document.getElementById('generateBtn').addEventListener('click', () => {
-            const count = parseInt(document.getElementById('receiptCount').value);
+            const countInput = document.getElementById('receiptCount');
+            const count = parseInt(countInput.value);
             if (isNaN(count) || count < 1) {
                 alert("Tolong masukkan angka yang valid.");
                 return;
